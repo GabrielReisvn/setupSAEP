@@ -1,0 +1,4 @@
+# O banco de uso local e a chave são gerados ao iniciar.
+*.sqlite
+*.sqlite-*
+*.sqlite.chave

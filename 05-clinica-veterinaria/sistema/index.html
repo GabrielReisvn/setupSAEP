@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clínica veterinária</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/app.js" defer></script>
+</head>
+<body>
+<header>
+    <h1>Clínica veterinária</h1>
+    <div id="conta" class="acoes" hidden><span id="usuario"></span><button id="sair" type="button">Sair</button></div>
+</header>
+<main>
+    <p id="mensagem" role="status" aria-live="polite"></p>
+    <section id="entrada" class="cartao login" hidden>
+        <h2>Entrar no sistema</h2>
+        <form id="login">
+            <label>Usuário <input name="login" maxlength="60" autocomplete="username" required></label>
+            <label>Senha <input name="senha" type="password" maxlength="128" autocomplete="current-password" required></label>
+            <button type="submit">Entrar</button>
+        </form>
+    </section>
+    <div id="painel" hidden>
+        <nav class="acoes" aria-label="Recursos do sistema">
+            <button type="button" data-pagina="agendamentos">Agendamentos</button>
+            <button type="button" data-pagina="tutores">Tutores</button>
+            <button type="button" data-pagina="pets">Pets</button>
+        </nav>
+        <!-- O mesmo formulário serve para cadastrar e editar. O ID fica oculto. -->
+        <section id="tutores" class="cartao" hidden>
+            <h2>Tutores</h2>
+            <form id="form-tutor">
+                <input type="hidden" name="id">
+                <div class="campos">
+                    <label>Nome <input name="nome" maxlength="100" required></label>
+                    <label>CPF <input name="cpf" inputmode="numeric" maxlength="20" required></label>
+                    <label>E-mail <input name="email" type="email" maxlength="150" required></label>
+                    <label>Telefone <input name="telefone" type="tel" maxlength="30" required></label>
+                </div>
+                <div class="acoes"><button type="submit">Cadastrar tutor</button><button type="button" data-limpar>Limpar</button></div>
+            </form>
+            <form id="busca" class="acoes busca">
+                <label>Buscar tutor <input name="termo" type="search" placeholder="Nome, CPF, telefone ou e-mail"></label>
+                <button type="submit">Buscar</button><button type="reset">Limpar busca</button>
+            </form>
+            <div class="tabela"><table>
+                <thead><tr><th>Nome</th><th>CPF</th><th>E-mail</th><th>Telefone</th><th>Ação</th></tr></thead>
+                <tbody id="lista-tutores"></tbody>
+            </table></div>
+        </section>
+        <section id="pets" class="cartao" hidden>
+            <h2>Pets</h2>
+            <form id="form-pet">
+                <input type="hidden" name="id">
+                <div class="campos">
+                    <label>Nome <input name="nome" maxlength="100" required></label>
+                    <label>Espécie <input name="especie" maxlength="100" required></label>
+                    <label>Raça <input name="raca" maxlength="100" required></label>
+                    <label>Tutor <select name="tutorId" required></select></label>
+                </div>
+                <div class="acoes"><button type="submit">Cadastrar pet</button><button type="button" data-limpar>Limpar</button></div>
+            </form>
+            <div class="tabela"><table>
+                <thead><tr><th>Nome</th><th>Espécie</th><th>Raça</th><th>Tutor</th><th>Ação</th></tr></thead>
+                <tbody id="lista-pets"></tbody>
+            </table></div>
+        </section>
+        <section id="agendamentos" class="cartao" hidden>
+            <h2>Agendamentos</h2>
+            <form id="form-agenda">
+                <input type="hidden" name="id">
+                <div class="campos">
+                    <label>Pet <select name="petId" required></select></label>
+                    <label>Data e hora <input name="data_hora" type="datetime-local" required></label>
+                    <label>Motivo <input name="motivo" maxlength="150" required></label>
+                </div>
+                <div class="acoes"><button type="submit">Cadastrar agendamento</button><button type="button" data-limpar>Limpar</button></div>
+            </form>
+            <div class="tabela"><table>
+                <thead><tr><th>Data e hora</th><th>Motivo</th><th>Pet</th><th>Tutor</th><th>Ação</th></tr></thead>
+                <tbody id="lista-agendamentos"></tbody>
+            </table></div>
+        </section>
+    </div>
+</main>
+</body>
+</html>

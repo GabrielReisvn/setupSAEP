@@ -1,0 +1,30 @@
+/* Arquivo local. A interface funciona mesmo com a internet desligada. */
+:root { font: 16px system-ui, sans-serif; color: #1d3030; background: #eef4f3; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; }
+header { background: #153f3c; color: white; padding: 1rem max(1rem, calc((100vw - 1120px) / 2)); display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+h1 { margin: 0; font-size: 1.55rem; }
+h2 { margin: 0 0 1rem; }
+main { max-width: 1152px; margin: auto; padding: 0 1rem 2rem; }
+#mensagem { min-height: 1.5rem; margin: .7rem 0; font-weight: 600; }
+.erro { color: #902a23; }
+.cartao { background: white; padding: 1.2rem; border: 1px solid #cbdcda; border-radius: .6rem; }
+.login { max-width: 385px; margin: 2rem auto; }
+nav { margin: 0 0 1rem; }
+.acoes { display: flex; align-items: end; gap: .55rem; flex-wrap: wrap; }
+form, label { display: grid; gap: .5rem; }
+form { gap: .85rem; }
+.campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: .75rem; }
+input, select, button { font: inherit; border: 1px solid #719695; border-radius: .35rem; padding: .55rem .7rem; }
+input, select { width: 100%; min-width: 0; }
+button { background: #e6f0ee; color: #193936; cursor: pointer; }
+button[type=submit], button[aria-current=page] { background: #176557; color: white; }
+button:disabled { opacity: .6; cursor: wait; }
+:focus-visible { outline: 2px solid #ad5d14; outline-offset: 2px; }
+.busca { margin-top: 1.25rem; }
+.busca label { min-width: min(100%, 245px); }
+.tabela { overflow: auto; margin-top: 1.25rem; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th, td { padding: .65rem; border-bottom: 1px solid #d6e2df; }
+th { background: #edf5f3; }
