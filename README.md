@@ -1,18 +1,19 @@
 # Setup SAEP — Gestão de estoque
 
-Três projetos independentes para praticar e adaptar conforme o enunciado e as regras do professor.
+Quatro projetos independentes para praticar e adaptar conforme o enunciado e as regras do professor.
 
 | Projeto | Funcionalidades |
 | --- | --- |
 | [01 — Almoxarifado](01-almoxarifado/index.html) | Produtos por categoria, entradas e saídas, estoque mínimo e histórico |
 | [02 — Empréstimo de ferramentas](02-ferramentas/index.html) | Retirada por responsável, devolução vinculada ao empréstimo e saldo disponível |
 | [03 — Compras e reposição](03-reposicao/index.html) | Consumo, pedidos por fornecedor, recebimento e cancelamento |
+| [04 — Almoxarifado com API e SQLite](04-almoxarifado-api/README.md) | API REST, estoque e histórico em banco local |
 
 ## Rodar offline
 
-Clone enquanto houver acesso ao GitHub. Abra o `index.html` da pasta escolhida em Edge ou Chrome. Todos os arquivos são locais e cada projeto roda sem instalação. Os dados ficam no armazenamento local do navegador e cada tela permite exportar e importar um backup JSON. A pasta e o perfil do navegador influenciam onde os dados ficam disponíveis, então exporte antes de trocar de máquina ou mover o projeto.
+Clone enquanto houver acesso ao GitHub. Nos projetos 01 a 03, abra o `index.html` da pasta escolhida em Edge ou Chrome. Todos os arquivos são locais e esses três projetos rodam sem instalação. Os dados ficam no armazenamento local do navegador e cada tela permite exportar e importar um backup JSON. A pasta e o perfil do navegador influenciam onde os dados ficam disponíveis, então exporte antes de trocar de máquina ou mover o projeto.
 
-Os exemplos usam JavaScript e armazenamento no navegador. Se o enunciado exigir API ou banco relacional, use [os modelos SQL](docs/modelos.sql) como ponto de partida e implemente a persistência exigida.
+No projeto 04, use Node.js 24+ e execute `node server.js` dentro de `04-almoxarifado-api`. Acesse `http://127.0.0.1:3000`. O projeto grava em SQLite local e roda sem instalar pacotes.
 
 ## Documentação
 

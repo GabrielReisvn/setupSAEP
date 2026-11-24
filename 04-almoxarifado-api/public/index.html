@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Almoxarifado local</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+<header><h1>Almoxarifado local</h1></header>
+<main>
+    <p id="status" role="status"></p>
+    <div class="grid">
+        <section>
+            <h2>Cadastro de produto</h2>
+            <form id="produto">
+                <input name="id" type="hidden">
+                <label>SKU <input name="sku" maxlength="30" required></label>
+                <label>Nome <input name="nome" maxlength="100" required></label>
+                <label>Categoria <input name="categoria" maxlength="60" required></label>
+                <label>Estoque mínimo <input name="minimo" type="number" min="0" max="2147483647" value="0" required></label>
+                <div><button id="salvar">Cadastrar produto</button> <button type="button" id="limpar">Limpar</button></div>
+            </form>
+        </section>
+        <section>
+            <h2>Movimentação</h2>
+            <form id="movimento">
+                <label>Produto <select name="produtoId" required></select></label>
+                <label>Tipo <select name="tipo"><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída</option></select></label>
+                <label>Quantidade <input name="quantidade" type="number" min="1" max="2147483647" required></label>
+                <label>Observação <input name="observacao" maxlength="200"></label>
+                <div><button>Registrar</button></div>
+            </form>
+        </section>
+    </div>
+    <section>
+        <h2>Produtos</h2>
+        <label>Buscar por nome, SKU ou categoria <input id="busca" type="search"></label>
+        <div class="table-wrap"><table>
+            <thead><tr><th>SKU</th><th>Produto</th><th>Categoria</th><th>Saldo</th><th>Mínimo</th><th>Situação</th><th>Ação</th></tr></thead>
+            <tbody id="catalogo"></tbody>
+        </table></div>
+    </section>
+    <section>
+        <h2>Histórico</h2>
+        <div class="table-wrap"><table>
+            <thead><tr><th>Data e hora (UTC)</th><th>SKU</th><th>Produto</th><th>Tipo</th><th>Quantidade</th><th>Observação</th></tr></thead>
+            <tbody id="historico"></tbody>
+        </table></div>
+    </section>
+</main>
+</body>
+</html>
