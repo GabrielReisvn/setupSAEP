@@ -2,8 +2,10 @@
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8">
+    <!-- Ajuda a página a usar a largura certa no celular. -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Empréstimo de ferramentas</title>
+    <!-- Os arquivos CSS e JavaScript estão no projeto. defer espera o HTML ser lido antes de rodar o JavaScript. -->
     <link rel="stylesheet" href="style.css">
     <script src="app.js" defer></script>
 </head>
@@ -14,15 +16,18 @@
     <p>Acompanhe a disponibilidade e vincule cada devolução à retirada original.</p>
 </header>
 <main>
+    <!-- O JavaScript procura estes IDs para atualizar os números do resumo. -->
     <section class="metrics" aria-label="Resumo do estoque">
         <div>Itens cadastrados<strong id="items-count">0</strong></div>
         <div>Estoque baixo<strong id="low-count">0</strong></div>
         <div>Movimentações<strong id="events-count">0</strong></div>
     </section>
+    <!-- O JavaScript coloca aqui as mensagens de sucesso e erro. -->
     <p id="status" role="status" aria-live="polite"></p>
     <div class="grid">
         <section>
             <h2>Cadastro de ferramenta</h2>
+            <!-- Formulário de cadastro e edição. O ID escondido identifica o registro em edição e cada name é a chave lida no JavaScript. -->
             <form id="item-form">
                 <input type="hidden" name="id">
                 <label>Código <input name="code" required maxlength="30" placeholder="ITEM-01"></label>
@@ -39,6 +44,7 @@
         <section>
             <h2>Movimentar estoque</h2>
             <p>Informe o responsável na retirada. Para devolver, selecione a retirada e informe a quantidade a devolver.</p>
+            <!-- Este formulário registra uma operação. O JavaScript preenche as opções dos seletores e decide quando mostrar o campo de origem. -->
             <form id="event-form">
                 <label>Ferramenta <select id="item" name="item" required></select></label>
                 <label>Operação <select id="type" name="type" required></select></label>
@@ -51,19 +57,23 @@
         </section>
     </div>
     <section>
+        <!-- O JavaScript preenche o tbody com os itens que correspondem à busca. -->
         <h2>Catálogo</h2>
         <label>Buscar por código, nome ou categoria <input id="search" type="search"></label>
         <div class="table-wrap"><table><thead><tr><th scope="col">Código</th><th scope="col">Nome</th><th scope="col">Categoria</th><th scope="col">Saldo</th><th scope="col">Mínimo</th><th scope="col">Situação</th><th scope="col">Ação</th></tr></thead><tbody id="catalog"></tbody></table></div>
     </section>
     <section>
+        <!-- A tabela mostra retiradas que ainda têm unidades para devolver. -->
         <h2>Retiradas a devolver</h2>
         <div class="table-wrap"><table><thead><tr><th scope="col">Número</th><th scope="col">Item</th><th scope="col">Responsável</th><th scope="col">Quantidade pendente</th></tr></thead><tbody id="open"></tbody></table></div>
     </section>
     <section>
+        <!-- O tbody começa vazio. O JavaScript monta uma linha para cada registro salvo. -->
         <h2>Histórico</h2>
         <div class="table-wrap"><table><thead><tr><th scope="col">Número</th><th scope="col">Data</th><th scope="col">Item</th><th scope="col">Operação</th><th scope="col">Quantidade</th><th scope="col">Responsável</th><th scope="col">Origem</th><th scope="col">Observação</th></tr></thead><tbody id="history"></tbody></table></div>
     </section>
     <section>
+        <!-- Os botões permitem baixar e recuperar os dados em formato JSON. -->
         <h2>Backup local</h2>
         <div class="actions">
             <button type="button" id="export">Exportar JSON</button>

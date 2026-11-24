@@ -9,11 +9,15 @@ Quatro projetos independentes para praticar e adaptar conforme o enunciado e as 
 | [03 — Compras e reposição](03-reposicao/index.html) | Consumo, pedidos por fornecedor, recebimento e cancelamento |
 | [04 — Almoxarifado com API e SQLite](04-almoxarifado-api/README.md) | API REST, estoque e histórico em banco local |
 
+> Para ler o código, comece em `index.html`. Os atributos `id` ligam os elementos da página ao `app.js`. No projeto 04, siga o `fetch()` do JavaScript até a rota em `server.js` e depois veja a tabela em `schema.sql`.
+
 ## Rodar offline
 
 Clone enquanto houver acesso ao GitHub. Nos projetos 01 a 03, abra o `index.html` da pasta escolhida em Edge ou Chrome. Todos os arquivos são locais e esses três projetos rodam sem instalação. Os dados ficam no armazenamento local do navegador e cada tela permite exportar e importar um backup JSON. A pasta e o perfil do navegador influenciam onde os dados ficam disponíveis, então exporte antes de trocar de máquina ou mover o projeto.
 
 No projeto 04, use Node.js 24+ e execute `node server.js` dentro de `04-almoxarifado-api`. Acesse `http://127.0.0.1:3000`. O projeto grava em SQLite local e roda sem instalar pacotes.
+
+> Quando adaptar um projeto, atualize a documentação para explicar como rodar a sua versão e como demonstrar uma regra do enunciado.
 
 ## Documentação
 

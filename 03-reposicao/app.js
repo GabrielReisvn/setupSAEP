@@ -1,20 +1,28 @@
+// Este arquivo controla compras e reposição. Exemplo: peça 10 e receba 4. Só as 4 recebidas vão para o estoque e o pedido continua com 6 pendentes.
 const config = {"kind":"orders"};
 
+// Cada cenário aceita tipos diferentes. O valor à esquerda é salvo nos dados e o texto à direita aparece na tela.
 const operations = {
     almox: { entrada: "Entrada", saida: "Saída" },
     tools: { retirada: "Retirada", devolucao: "Devolução" },
     orders: { consumo: "Consumo", pedido: "Pedido", recebimento: "Recebimento", cancelamento: "Cancelamento" }
 }[config.kind];
 
+// Uma operação de origem é o registro anterior que esta ação precisa consultar. Uma devolução, por exemplo, aponta para uma retirada.
 const linkedOperations = { devolucao: "retirada", recebimento: "pedido", cancelamento: "pedido" };
+// Set é uma lista sem repetição. Aqui ele indica quais operações exigem que a pessoa informe responsável ou fornecedor.
 const requiredActor = new Set(["retirada", "pedido"]);
+// Estas verificações são usadas também para revisar um backup. trim() tira espaços das pontas e isSafeInteger() exige um inteiro representável com precisão.
 const isText = value => typeof value === "string" && value.trim().length > 0;
 const isCount = value => Number.isSafeInteger(value) && value >= 0;
 
+// Se a condição falhar, o erro interrompe a função e a mensagem chega ao formulário ou à importação.
 function ensure(condition, message) {
     if (!condition) throw new Error(message);
 }
 
+// O estado salvo contém os itens e o histórico. Esta função recomeça no saldo inicial de cada item e reaplica as operações na ordem em que aconteceram.
+// Ela monta cópias com saldo calculado e um mapa de pendências. Pode ser chamada para conferir dados sem mexer no estado salvo.
 function derive(state) {
     ensure(state?.version === 1 && state.project === config.kind &&
         Array.isArray(state.items) && Array.isArray(state.events), "Backup incompatível com este projeto.");
@@ -22,6 +30,7 @@ function derive(state) {
     const codes = new Set();
     const pending = new Map();
 
+    // O Map permite encontrar um item pelo ID. O Set de códigos compara a versão em maiúsculas para detectar duplicatas como abc e ABC.
     for (const item of state.items) {
         ensure(item && isText(item.id) && !items.has(item.id) && isText(item.code) &&
             isText(item.name) && isText(item.group) && isCount(item.initial) && isCount(item.minimum),
@@ -32,6 +41,7 @@ function derive(state) {
         items.set(item.id, { ...item, stock: item.initial });
     }
 
+    // O índice é a posição no histórico, começando em zero. A tela mostra índice + 1, então a primeira operação aparece como #1.
     for (const [index, event] of state.events.entries()) {
         ensure(event && Object.hasOwn(operations, event.type) && items.has(event.itemId) &&
             isCount(event.amount) && event.amount > 0 && typeof event.actor === "string" &&
@@ -41,6 +51,7 @@ function derive(state) {
         const item = items.get(event.itemId);
         const sourceType = linkedOperations[event.type];
 
+        // A origem precisa estar aberta, ser do tipo esperado e pertencer ao mesmo item. Só o saldo ainda pendente pode ser baixado.
         if (sourceType) {
             const source = pending.get(event.source);
             ensure(source?.event.type === sourceType && source.event.itemId === item.id &&
@@ -51,9 +62,11 @@ function derive(state) {
             source.remaining -= event.amount;
         }
 
+        // Retirada e pedido abrem uma pendência. Receber ou devolver uma parte diminui a pendência da origem.
         if (event.type === "retirada" || event.type === "pedido") {
             pending.set(index, { event, remaining: event.amount });
         }
+        // Aqui fica a regra do saldo físico. Pedido e cancelamento só mudam a pendência. O saldo final precisa continuar inteiro e não negativo.
         if (["saida", "retirada", "consumo"].includes(event.type)) item.stock -= event.amount;
         if (["entrada", "devolucao", "recebimento"].includes(event.type)) item.stock += event.amount;
         ensure(isCount(item.stock), "Saldo insuficiente ou acima do limite numérico.");
@@ -61,10 +74,13 @@ function derive(state) {
     return { items, pending };
 }
 
+// No Node, dá para importar a função de regras para testar com objetos. No navegador, document existe e o trecho da tela roda.
 if (typeof module !== "undefined") module.exports = { config, derive };
 
 if (typeof document !== "undefined") {
+    // localStorage guarda texto no navegador. Cada cenário tem sua chave para manter os dados separados.
     const key = "setup-saep:" + config.kind + ":v1";
+    // $("catalog") é um atalho para encontrar o elemento com id="catalog" no HTML.
     const $ = id => document.getElementById(id);
     const blank = { version: 1, project: config.kind, items: [], events: [] };
     let state = blank;
@@ -76,6 +92,7 @@ if (typeof document !== "undefined") {
     }
 
     try {
+        // JSON.parse converte o texto salvo num objeto. derive() verifica os dados antes de abrir a tela com eles.
         const saved = localStorage.getItem(key);
         if (saved) {
             const candidate = JSON.parse(saved);
@@ -83,10 +100,12 @@ if (typeof document !== "undefined") {
             state = candidate;
         }
     } catch {
+        // Se a leitura falhar, impeça gravações comuns para preservar os dados até recuperar um backup.
         storageReadFailed = true;
         message("Falha ao ler os dados locais. Importe um backup válido para recuperar o projeto.", true);
     }
 
+    // Valide a mudança proposta antes de salvar. Só troque o estado em memória e redesenhe a tela depois de conseguir gravar no navegador.
     function commit(candidate, importing = false) {
         ensure(importing || !storageReadFailed, "Importe um backup válido antes de alterar os dados.");
         derive(candidate);
@@ -100,12 +119,14 @@ if (typeof document !== "undefined") {
         select.add(new Option(label, value));
     }
 
+    // Crie uma linha e preencha células como texto. Assim, o que a pessoa digita aparece como texto mesmo que contenha caracteres de HTML.
     function row(table, values) {
         const tr = $(table).insertRow();
         for (const value of values) tr.insertCell().textContent = value;
         return tr;
     }
 
+    // Ao mudar o item ou o tipo, recalcule as origens disponíveis. O campo fica obrigatório apenas quando a operação usa uma origem.
     function refreshSource() {
         const type = $("type").value;
         const sourceType = linkedOperations[type];
@@ -122,6 +143,7 @@ if (typeof document !== "undefined") {
         }
     }
 
+    // Atualize catálogo, indicadores, seletores e histórico a partir dos dados. A busca limita as linhas visíveis do catálogo.
     function render() {
         const { items, pending } = derive(state);
         const previousItem = $("item").value;
@@ -143,6 +165,7 @@ if (typeof document !== "undefined") {
             const edit = document.createElement("button");
             edit.type = "button";
             edit.textContent = "Editar";
+            // Editar preenche o formulário com o ID existente. O saldo inicial fica bloqueado para preservar o cálculo do histórico.
             edit.addEventListener("click", () => {
                 const form = $("item-form");
                 for (const field of ["id", "code", "name", "group", "initial", "minimum"]) {
@@ -167,6 +190,7 @@ if (typeof document !== "undefined") {
         }
         if (!$("open").rows.length) row("open", ["Nenhuma operação em aberto"]);
 
+        // Mostre as últimas operações primeiro. reverse() atua na cópia para manter a ordem original usada no cálculo.
         for (const [index, event] of [...state.events.entries()].reverse()) {
             const actor = event.actor || state.events[event.source]?.actor || "—";
             row("history", ["#" + (index + 1), new Date(event.date).toLocaleString("pt-BR"),
@@ -177,6 +201,7 @@ if (typeof document !== "undefined") {
         refreshSource();
     }
 
+    // Limpe também o ID oculto. Sem esse ID, o próximo envio cria um item em vez de editar outro.
     function resetItem() {
         const form = $("item-form");
         form.reset();
@@ -185,12 +210,14 @@ if (typeof document !== "undefined") {
         $("save-item").textContent = "Cadastrar item";
     }
 
+    // Monte as opções válidas deste cenário e ligue os campos às ações de busca, seleção e limpeza.
     for (const [value, label] of Object.entries(operations)) option($("type"), value, label);
     $("type").addEventListener("change", refreshSource);
     $("item").addEventListener("change", refreshSource);
     $("search").addEventListener("input", render);
     $("cancel-edit").addEventListener("click", resetItem);
 
+    // preventDefault() impede o recarregamento. FormData lê os campos pelo atributo name. Um ID existente indica edição.
     $("item-form").addEventListener("submit", event => {
         event.preventDefault();
         const fields = new FormData(event.currentTarget);
@@ -213,6 +240,7 @@ if (typeof document !== "undefined") {
         }
     });
 
+    // Converta a quantidade digitada em número e acrescente um registro ao histórico. commit() confere o histórico inteiro antes de aceitar.
     $("event-form").addEventListener("submit", event => {
         event.preventDefault();
         const fields = new FormData(event.currentTarget);
@@ -232,6 +260,7 @@ if (typeof document !== "undefined") {
         }
     });
 
+    // Transforme o estado em texto JSON e use um link temporário para o navegador baixar o arquivo.
     $("export").addEventListener("click", () => {
         const url = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: "application/json" }));
         const link = document.createElement("a");
@@ -241,6 +270,7 @@ if (typeof document !== "undefined") {
         setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
 
+    // Leia o arquivo, valide o cenário e as regras e confirme a substituição dos dados existentes antes de gravar.
     $("import").addEventListener("change", async event => {
         const input = event.currentTarget;
         const file = input.files[0];

@@ -1,9 +1,13 @@
+/* Cores e fonte usadas na página. Comece aqui se quiser mudar o fundo e a cor padrão do texto. */
 :root { font: 1rem system-ui, sans-serif; color: #172c29; background: #eff4f2; }
 * { box-sizing: border-box; }
 body { margin: 0; }
+/* A faixa do título vai de ponta a ponta. O espaçamento acompanha a largura do conteúdo. */
 header { background: #153f36; color: white; padding: 1.5rem max(1rem, calc((100vw - 1080px) / 2)); }
 h1 { margin: 0; }
+/* A largura máxima evita esticar demais o conteúdo em telas largas. margin: auto centraliza o bloco. */
 main { max-width: 1120px; margin: auto; padding: 1rem; }
+/* O grid encaixa os formulários em colunas conforme o espaço. No celular eles ficam empilhados. */
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1rem; }
 section { background: white; padding: 1rem; border: 1px solid #ccdbd6; border-radius: .6rem; margin-bottom: 1rem; }
 h2 { margin: 0 0 .75rem; font-size: 1.15rem; }
@@ -12,10 +16,14 @@ form { gap: .75rem; }
 input, button, select { font: inherit; border: 1px solid #829e95; border-radius: .3rem; padding: .5rem; }
 input, select { width: 100%; }
 button { background: #155b49; color: white; cursor: pointer; }
+/* Enquanto a API responde, o botão desativado mostra que o envio está em andamento. */
 button:disabled { opacity: .55; cursor: wait; }
+/* Se a tabela ficar larga demais, a rolagem acontece aqui dentro. */
 .table-wrap { overflow: auto; margin-top: .75rem; }
 table { width: 100%; border-collapse: collapse; text-align: left; }
 th, td { padding: .55rem; border-bottom: 1px solid #d6e2da; }
 th { background: #edf5f1; white-space: nowrap; }
+/* O JavaScript coloca esta classe na linha se o saldo estiver abaixo ou igual ao mínimo. */
 .baixo { background: #fff0ce; }
+/* Reserve espaço para mensagens para a tela pular menos quando aparece um aviso. */
 #status { min-height: 1.5rem; font-weight: 600; margin-top: 0; }

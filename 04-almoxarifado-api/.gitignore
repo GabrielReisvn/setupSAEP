@@ -1,1 +1,2 @@
+# O banco é criado na sua máquina. O * também ignora arquivos auxiliares do SQLite.
 estoque.sqlite*

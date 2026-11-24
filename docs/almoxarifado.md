@@ -14,6 +14,8 @@ Abra `index.html` da pasta `01-almoxarifado` no Edge ou Chrome. O navegador arma
 - **RF02** — Registrar entradas e saídas e manter um histórico.
 - **RF03** — Destacar materiais com saldo menor ou igual ao mínimo.
 
+> Leia cada RF como uma tarefa que dá para demonstrar na tela. A regra de negócio descreve quando a ação deve passar ou ser bloqueada.
+
 ## Regra de negócio
 
 **RN01** — Uma saída maior que o saldo disponível é recusada sem gravar histórico.
@@ -42,6 +44,8 @@ erDiagram
 ```
 
 O diagrama representa os dados do app. A aplicação usa armazenamento local. O [script SQL](modelos.sql) propõe um esquema relacional separado para o caso de a atividade exigir banco de dados.
+
+> No diagrama acima, PK identifica o registro, FK liga a outro registro e UK indica valor único. O lado `o{` permite zero ou muitos registros relacionados.
 
 ## Roteiro de teste
 

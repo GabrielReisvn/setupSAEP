@@ -10,6 +10,8 @@ Comece pelo enunciado. Identifique os arquivos obrigatórios, os nomes exigidos 
 | Banco SQL | DDL que roda em banco limpo e dados de exemplo, se pedidos |
 | Evidência de teste | Entrada, resultado esperado, resultado observado e arquivo da captura, se exigida |
 
+> RF é uma ação que o sistema permite fazer. RN é uma condição que muda o resultado. Por exemplo, registrar saída é RF. Bloquear saída acima do saldo é RN.
+
 ## Modelo para copiar
 
 ~~~markdown
@@ -36,6 +38,8 @@ Comece pelo enunciado. Identifique os arquivos obrigatórios, os nomes exigidos 
 | T01 | [Fluxo válido] | [Efeito esperado] | [Preencher após executar] |
 | T02 | [Tentativa inválida] | [Mensagem e estado esperado] | [Preencher após executar] |
 ~~~
+
+> Preencha os campos entre colchetes com o seu conteúdo. Na coluna de resultado observado, escreva o que viu durante o teste.
 
 ## Conferência antes da entrega
 
