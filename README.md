@@ -15,7 +15,7 @@ Quatro projetos independentes para praticar e adaptar conforme o enunciado e as 
 
 Clone enquanto houver acesso ao GitHub. Nos projetos 01 e 02, abra o `index.html` da pasta escolhida em Edge ou Chrome. Todos os arquivos são locais e esses dois projetos rodam sem instalação. Os dados ficam no armazenamento local do navegador e cada tela permite exportar e importar um backup JSON. A pasta e o perfil do navegador influenciam onde os dados ficam disponíveis, então exporte antes de trocar de máquina ou mover o projeto.
 
-No projeto 03, use Node.js 24+ e execute `node server.js` dentro de `03-reposicao`. Acesse <http://127.0.0.1:3003> e use o [usuário inicial descrito no guia](docs/reposicao.md#execução).
+No projeto 03, use Node.js 24+ e execute `node server.js` dentro de `03-reposicao`. Acesse <http://127.0.0.1:3003> e use o [usuário inicial descrito no guia](docs/reposicao.md#execução). Para popular um banco vazio com 3 pedidos de exemplo, pare o servidor e execute `node seed.js` na pasta do projeto.
 
 No projeto 04, use Node.js 24+ e execute `node server.js` dentro de `04-almoxarifado-api`. Acesse `http://127.0.0.1:3000`. O projeto grava em SQLite local e roda sem instalar pacotes.
 
