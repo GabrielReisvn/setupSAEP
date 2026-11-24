@@ -6,7 +6,7 @@ Registre consumo, identifique itens abaixo do mínimo e acompanhe pedidos de com
 
 ## Execução
 
-Com Node.js 24 ou superior, entre na pasta `03-reposicao` e rode `node server.js`. Abra <http://127.0.0.1:3003>. A aplicação funciona offline e usa os módulos nativos do Node.js.
+Com Node.js 24 ou superior, entre na pasta `03-reposicao` e rode `node server.js`. Abra <http://127.0.0.1:3003>. A aplicação funciona offline e usa os módulos nativos do Node.js. Para iniciar o banco com três pedidos de exemplo, pare o servidor e rode `node seed.js`. O script cria três insumos com estoque baixo e três pedidos pendentes. Se o banco já tiver dados, ele não os altera.
 
 O primeiro início cria o usuário de treino **`operador`**, com a senha **`SAEP2026!`**. Para usar outra senha, defina a variável de ambiente `REPOSICAO_SENHA_INICIAL` antes de criar o banco. O SQLite grava o hash e o sal da senha. A sessão termina ao clicar em **Sair**, ao vencer após 12 horas ou ao reiniciar o servidor.
 
