@@ -36,3 +36,11 @@ th { background: #eff5f1; white-space: nowrap; }
 /* Reserve espaço para mensagens para a tela pular menos quando aparece um aviso. */
 #status { min-height: 1.5rem; font-weight: 600; }
 .error { color: #9b2525; }
+
+/* Centralize o formulário de entrada e mantenha usuário e saída juntos no cabeçalho. */
+.pagina-login { min-height: 100vh; display: grid; place-items: center; }
+.pagina-login main { width: min(100%, 420px); }
+.pagina-login section { padding: 1.5rem; }
+.pagina-login h1 { font-size: 1.65rem; }
+.sessao { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; margin-top: .9rem; }
+.sessao button { background: #e5f0eb; color: #153b31; }

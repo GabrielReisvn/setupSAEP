@@ -6,13 +6,18 @@ Registre consumo, identifique itens abaixo do mínimo e acompanhe pedidos de com
 
 ## Execução
 
-Abra `index.html` da pasta `03-reposicao` no Edge ou Chrome. O navegador armazena os dados localmente. O backup JSON transfere os dados entre cópias do mesmo projeto.
+Com Node.js 24 ou superior, entre na pasta `03-reposicao` e rode `node server.js`. Abra <http://127.0.0.1:3003>. A aplicação funciona offline e usa os módulos nativos do Node.js.
+
+O primeiro início cria o usuário de treino **`operador`**, com a senha **`SAEP2026!`**. Para usar outra senha, defina a variável de ambiente `REPOSICAO_SENHA_INICIAL` antes de criar o banco. O SQLite grava o hash e o sal da senha. A sessão termina ao clicar em **Sair**, ao vencer após 12 horas ou ao reiniciar o servidor.
+
+O arquivo `reposicao.sqlite` é criado na pasta do projeto. Para trazer registros da versão anterior, exporte o backup JSON nessa versão e importe no painel depois de entrar.
 
 ## Requisitos funcionais
 
 - **RF01** — Cadastrar insumos, registrar consumo e destacar saldo baixo.
 - **RF02** — Abrir pedidos com fornecedor.
 - **RF03** — Registrar recebimento parcial ou total e cancelar o saldo pendente.
+- **RF04** — Entrar com um usuário cadastrado e encerrar a sessão pelo botão **Sair**.
 
 > Leia cada RF como uma tarefa que dá para demonstrar na tela. A regra de negócio descreve quando a ação deve passar ou ser bloqueada.
 
@@ -45,7 +50,7 @@ erDiagram
     }
 ```
 
-O diagrama representa os dados do app. A aplicação usa armazenamento local. O [script SQL](modelos.sql) propõe um esquema relacional separado para o caso de a atividade exigir banco de dados.
+O diagrama representa os dados de estoque dentro do JSON. O [esquema em uso](../03-reposicao/schema.sql) tem uma tabela `usuarios` para credenciais e uma tabela `estoque` para o JSON do catálogo e do histórico. O arquivo [modelos.sql](modelos.sql) traz um exemplo de como distribuir o estoque em tabelas relacionais.
 
 > No diagrama acima, PK identifica o registro, FK liga a outro registro e UK indica valor único. O lado `o{` permite zero ou muitos registros relacionados.
 
@@ -56,3 +61,5 @@ O diagrama representa os dados do app. A aplicação usa armazenamento local. O 
 3. Cancele as 6 restantes. Confira que o pedido sai da lista de pendências e o saldo permanece 7.
 4. Recarregue a página e confira se o catálogo e o histórico persistiram.
 5. Exporte o JSON e confira se a importação recupera os registros nesse mesmo projeto.
+6. Clique em **Sair**. Confira que a tela de login volta e que `GET /api/estoque` responde com HTTP 401.
+7. Entre novamente com a conta de treino e confira que o saldo e o histórico continuam no banco.

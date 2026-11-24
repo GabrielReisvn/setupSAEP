@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entrar · Compras e reposição</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="pagina-login">
+<main>
+    <section>
+        <h1>Compras e reposição</h1>
+        <p>Entre para acessar o estoque.</p>
+        <!-- O servidor insere aqui um aviso quando o login falha. -->
+        <!-- mensagem do servidor -->
+        <form action="/login" method="post">
+            <label>Usuário <input name="login" autocomplete="username" maxlength="60" required autofocus></label>
+            <label>Senha <input name="senha" type="password" autocomplete="current-password" maxlength="128" required></label>
+            <button type="submit">Entrar</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

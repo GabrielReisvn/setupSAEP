@@ -78,41 +78,57 @@ function derive(state) {
 if (typeof module !== "undefined") module.exports = { config, derive };
 
 if (typeof document !== "undefined") {
-    // localStorage guarda texto no navegador. Cada cenário tem sua chave para manter os dados separados.
-    const key = "setup-saep:" + config.kind + ":v1";
-    // $("catalog") é um atalho para encontrar o elemento com id="catalog" no HTML.
+    // O navegador guarda uma cópia para renderizar. O SQLite fica no servidor.
     const $ = id => document.getElementById(id);
-    const blank = { version: 1, project: config.kind, items: [], events: [] };
-    let state = blank;
-    let storageReadFailed = false;
+    let state;
+    let revisao;
+    let salvando = false;
 
     function message(text, error = false) {
         $("status").textContent = text;
         $("status").classList.toggle("error", error);
     }
 
-    try {
-        // JSON.parse converte o texto salvo num objeto. derive() verifica os dados antes de abrir a tela com eles.
-        const saved = localStorage.getItem(key);
-        if (saved) {
-            const candidate = JSON.parse(saved);
-            derive(candidate);
-            state = candidate;
+    async function chamarEstoque(opcoes) {
+        const resposta = await fetch("/api/estoque", opcoes);
+        if (resposta.status === 401) {
+            location.replace("/");
+            throw new Error("Sua sessão terminou.");
         }
-    } catch {
-        // Se a leitura falhar, impeça gravações comuns para preservar os dados até recuperar um backup.
-        storageReadFailed = true;
-        message("Falha ao ler os dados locais. Importe um backup válido para recuperar o projeto.", true);
+        const dados = await resposta.json();
+        if (!resposta.ok) throw new Error(dados.erro);
+        return dados;
     }
 
-    // Valide a mudança proposta antes de salvar. Só troque o estado em memória e redesenhe a tela depois de conseguir gravar no navegador.
-    function commit(candidate, importing = false) {
-        ensure(importing || !storageReadFailed, "Importe um backup válido antes de alterar os dados.");
-        derive(candidate);
-        localStorage.setItem(key, JSON.stringify(candidate));
-        storageReadFailed = false;
-        state = candidate;
+    // Envie a revisão que veio do servidor. Só atualize a tela após confirmar a gravação.
+    async function commit(candidate) {
+        ensure(!salvando, "Aguarde a gravação anterior terminar.");
+        salvando = true;
+        try {
+            derive(candidate);
+            const dados = await chamarEstoque({
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ estado: candidate, revisao })
+            });
+            revisao = dados.revisao;
+            state = candidate;
+            render();
+        } finally {
+            salvando = false;
+        }
+    }
+
+    async function carregar() {
+        if (location.protocol === "file:") {
+            throw new Error("Execute node server.js e abra http://127.0.0.1:3003.");
+        }
+        const dados = await chamarEstoque();
+        state = dados.estado;
+        revisao = dados.revisao;
+        $("usuario-ativo").textContent = "Usuário: " + dados.login;
         render();
+        $("estoque").hidden = false;
     }
 
     function option(select, value, label) {
@@ -218,7 +234,7 @@ if (typeof document !== "undefined") {
     $("cancel-edit").addEventListener("click", resetItem);
 
     // preventDefault() impede o recarregamento. FormData lê os campos pelo atributo name. Um ID existente indica edição.
-    $("item-form").addEventListener("submit", event => {
+    $("item-form").addEventListener("submit", async event => {
         event.preventDefault();
         const fields = new FormData(event.currentTarget);
         const editing = state.items.find(item => item.id === fields.get("id"));
@@ -232,7 +248,7 @@ if (typeof document !== "undefined") {
         };
         try {
             const items = editing ? state.items.map(current => current.id === item.id ? item : current) : [...state.items, item];
-            commit({ ...state, items });
+            await commit({ ...state, items });
             resetItem();
             message("Cadastro salvo.");
         } catch (error) {
@@ -241,18 +257,19 @@ if (typeof document !== "undefined") {
     });
 
     // Converta a quantidade digitada em número e acrescente um registro ao histórico. commit() confere o histórico inteiro antes de aceitar.
-    $("event-form").addEventListener("submit", event => {
+    $("event-form").addEventListener("submit", async event => {
         event.preventDefault();
-        const fields = new FormData(event.currentTarget);
+        const form = event.currentTarget;
+        const fields = new FormData(form);
         const type = fields.get("type");
         const source = fields.get("source");
         try {
-            commit({ ...state, events: [...state.events, {
+            await commit({ ...state, events: [...state.events, {
                 type, itemId: fields.get("item"), amount: Number(fields.get("amount")),
                 actor: fields.get("actor").trim(), note: fields.get("note").trim(),
                 date: new Date().toISOString(), source: linkedOperations[type] && source !== "" ? Number(source) : null
             }] });
-            event.currentTarget.reset();
+            form.reset();
             refreshSource();
             message("Movimentação registrada.");
         } catch (error) {
@@ -281,7 +298,7 @@ if (typeof document !== "undefined") {
             if (state.items.length || state.events.length) {
                 if (!confirm("A importação substituirá os dados atuais. Continuar?")) return;
             }
-            commit(candidate, true);
+            await commit(candidate);
             resetItem();
             message("Backup importado.");
         } catch (error) {
@@ -291,5 +308,10 @@ if (typeof document !== "undefined") {
         }
     });
 
-    render();
+    // Voltando pelo botão do navegador após sair, consulte a sessão novamente.
+    window.addEventListener("pageshow", event => {
+        if (event.persisted) location.reload();
+    });
+
+    carregar().catch(error => message(error.message, true));
 }
